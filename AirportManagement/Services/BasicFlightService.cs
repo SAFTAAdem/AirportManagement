@@ -1,74 +1,80 @@
-﻿using AirportManagement.Domain;
-using AirportManagement.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using AM.ApplicationCore.Domain;
+using AM.ApplicationCore.Interfaces;
+using AM.ApplicationCore;
 
-namespace AirportManagement.Services
+namespace AM.ApplicationCore.Services
 {
     public class BasicFlightService : IBasicFlightService
     {
-        private readonly ICollection<Flight> _flights;
+        private IEnumerable<Flight> source;
+        private ShowLine showLine;
 
-        public BasicFlightService(ICollection<Flight> flights)
+        public BasicFlightService(IEnumerable<Flight> flights, ShowLine showLine)
         {
-            _flights = flights;
+            this.source = flights;
+            this.showLine = showLine;
         }
+
         public void ShowFlights(string filterType, string filterValue)
         {
-            // Liste pour stocker les vols filtrés
-            IEnumerable<Flight> filteredFlights = _flights;
+            showLine($"Filter Type: {filterType}");
+            showLine($"Filter Value: {filterValue}");
 
-            // Filtrage selon le type
-            switch (filterType.ToLower())
+            switch (filterType)
             {
-                case "destination":
-                    filteredFlights = _flights.Where(f => f.Destination.Equals(filterValue));
+                case "Destination":
+                    foreach (var f in source.Where(f => f.Destination == filterValue))
+                        showLine(f.ToString());
                     break;
 
-                case "departure":
-                    filteredFlights = _flights.Where(f => f.Departure.Equals(filterValue));
+                case "FlightDate":
+                    DateTime fd = DateTime.Parse(filterValue);
+                    foreach (var f in source.Where(f => f.FlightDate == fd))
+                        showLine(f.ToString());
                     break;
 
-                case "flightdate":
-                    // Conversion de la chaîne en DateTime
-                    if (DateTime.TryParse(filterValue, out DateTime date))
-                    {
-                        filteredFlights = _flights.Where(f => f.FlightDate.Date == date.Date);
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Format de date invalide.");
-                    }
-                    break;
-
-                case "flightid":
-                    // Conversion en int
-                    if (int.TryParse(filterValue, out int id))
-                    {
-                        filteredFlights = _flights.Where(f => f.FlightId == id);
-                    }
-                    else
-                    {
-                        throw new ArgumentException("L'ID du vol doit être un nombre.");
-                    }
+                case "FlightId":
+                    int id = int.Parse(filterValue);
+                    foreach (var f in source.Where(f => f.FlightId == id))
+                        showLine(f.ToString());
                     break;
 
                 default:
                     throw new ArgumentException("Unknown filter");
             }
+        }
 
-            // Affichage du résultat
-            if (!filteredFlights.Any())
-            {
-                Console.WriteLine("Aucun vol trouvé avec ce filtre.");
-                return;
-            }
 
-            foreach (var flight in filteredFlights)
-            {
-                Console.WriteLine(flight);
-            }
+
+        public IEnumerable<(int FlightId, double Duration)> GetDurationsInMinutes()
+        {
+            foreach (var f in source)
+                yield return (f.FlightId, (double)(f.EstimatedDuration * 60));
+        }
+
+        public IEnumerable<(int FlightId, double Duration)> GetDurationsInMinutesLINQ()
+        {
+            return source.Select(f => (f.FlightId, (double)(f.EstimatedDuration * 60)));
+        }
+
+        public IEnumerable<Flight> GetFlightsSortedByDuration()
+        {
+            return source.OrderByDescending(f => f.EstimatedDuration);
+        }
+
+        public double GetDurationsAverage()
+        {
+            return source.Average(f => f.EstimatedDuration);
+        }
+
+        public IEnumerable<string> GetPassengerTypes(int flightId)
+        {
+            var flight = source.FirstOrDefault(f => f.FlightId == flightId);
+            if (flight == null) return new List<string>();
+            return flight.Passengers.Select(p => p.PassengerType);
         }
     }
 }

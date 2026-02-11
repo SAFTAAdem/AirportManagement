@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="AirportManagement.ConsoleTest/AirportManagement.ConsoleTest.csproj" Id="a43446a2-4cdd-40e0-beb9-4053e83fa146" />
   <Project Path="AirportManagement/AirportManagement.csproj" />
+  <Project Path="AM.UI.Console/AM.UI.Console.csproj" Id="158d1247-e056-4b81-adec-2655638c10d6" />
 </Solution>

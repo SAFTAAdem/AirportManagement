@@ -1,30 +1,25 @@
-﻿using System;
+﻿using AirportManagement.Domain;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace AirportManagement.Domain
+namespace AM.ApplicationCore.Domain
 {
     public class Flight
     {
-        public int FlightId { get; set; }          
-        public DateTime FlightDate { get; set; }
-        public DateTime EffectiveArrival { get; set; }
         public string Departure { get; set; }
         public string Destination { get; set; }
-        public float EstimatedDuration { get; set; } 
-
-        
-        public int PlaneId { get; set; }
+        public DateTime EffectiveArrival { get; set; }
+        public float EstimatedDuration { get; set; }
+        public DateTime FlightDate { get; set; }
+        public int FlightId { get; set; }
         public Plane Plane { get; set; }
-
-        public IList<Passenger> Passengers { get; set; } = new List<Passenger>();
-
+        public IList<Passenger> Passengers { get; set; }
         public override string ToString()
         {
-            string avion = Plane != null ? Plane.ToString() : "Aucun avion assigné";
-            return $"Vol {FlightId} | {FlightDate:dd/MM/yyyy HH:mm} → {Destination} | Durée estimée : {EstimatedDuration}h | " +
-                   $"Arrivée : {EffectiveArrival:HH:mm} | Avion : {avion} | {Passengers.Count} passagers";
+            return $"FlightId : {FlightId}, Destination : {Destination}, FlightDate : {FlightDate}";
         }
-
     }
 }

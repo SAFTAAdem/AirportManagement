@@ -1,19 +1,21 @@
-﻿using System;
+﻿using AirportManagement.Domain;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace AirportManagement.Domain
+namespace AM.ApplicationCore.Domain
 {
-    
     public class Plane
     {
-        public int PlaneId { get; set; }  
-        public PlaneType PlaneType { get; set; }
         public int Capacity { get; set; }
         public DateTime ManufactureDate { get; set; }
-
-        public Plane() { }
-
+        public int PlaneId { get; set; }
+        public PlaneType PlaneType { get; set; }
+        public IList<Flight> Flights { get; set; }
+        public Plane()
+        { }
         public Plane(PlaneType planeType, int capacity, DateTime manufactureDate)
         {
             PlaneType = planeType;
@@ -22,9 +24,7 @@ namespace AirportManagement.Domain
         }
         public override string ToString()
         {
-            return $"Avion {PlaneId} - {PlaneType} - Capacité : {Capacity} places - Fabriqué le {ManufactureDate:dd/MM/yyyy}";
+            return $"PlaneId : {PlaneId}, PlaneType : {PlaneType}";
         }
-        public ICollection<Flight> Flights { get; set; } = new List<Flight>();
-
     }
 }
