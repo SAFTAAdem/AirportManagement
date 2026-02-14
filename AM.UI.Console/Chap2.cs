@@ -1,56 +1,33 @@
-﻿using System;
-using AM.ApplicationCore;          // pour ShowLine et CoreExtensions
-using AM.ApplicationCore.Domain;   // pour Flight, Passenger, etc.
-using AM.ApplicationCore.Services; // pour BasicFlightService
+﻿using AM.ApplicationCore;
+using AM.ApplicationCore.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AM.UI.Console
 {
-    public class Chap2
+    internal class Chap2
     {
-        // Définition du délégué static qui pointe vers Console.WriteLine
-        public static ShowLine show = s => System.Console.WriteLine(s);
-        // alternative : public static ShowLine show = s => Console.WriteLine(s);
-
-        // =========================
-        // TEST 1
-        // =========================
+        static ShowLine showLine = System.Console.WriteLine;
         public static void Test1()
         {
-            // Création du service avec source de vols et délégué show
-            var service = new BasicFlightService(
-                InMemorySource.Flights,
-                show);
+            var flightService = new BasicFlightService(InMemorySource.Flights, showLine);
 
-            // Tester ShowFlights avec différents filtres
-            service.ShowFlights("Destination", "Paris");
-            service.ShowFlights("Destination", "Madrid");
-            service.ShowFlights("FlightId", "3");
+            flightService.ShowFlights("Destination", "Paris");
+            flightService.ShowFlights("Destination", "Madrid");
+            flightService.ShowFlights("FlightId", "3");
         }
-
-        // =========================
-        // TEST 2 (Section III)
-        // =========================
         public static void Test2()
         {
-            var service = new BasicFlightService(
-                InMemorySource.Flights,
-                show);
+            var flightService = new BasicFlightService(InMemorySource.Flights, showLine);
 
-            // Utilisation des méthodes LINQ / extensions pour afficher les listes
-            service.GetDurationsInMinutes()
-                   .ShowList("GetDurationsInMinutes", show);
-
-            service.GetDurationsInMinutesLINQ()
-                   .ShowList("GetDurationsInMinutesLINQ", show);
-
-            service.GetFlightsSortedByDuration()
-                   .ShowList("GetFlightsSortedByDuration", show);
-
-            show("========== GetDurationsAverage ==========");
-            show(service.GetDurationsAverage().ToString());
-
-            service.GetPassengerTypes(3)
-                   .ShowList("GetPassengerTypes", show);
+            flightService.GetDurationsInMinutes().ShowList("== GetDurationsInMinutes ==", showLine);
+            flightService.GetFlightsSortedByDuration().ShowList("== GetFlightsSortedByDuration ==", showLine);
+            new[] { flightService.GetDurationsAverage() }.ShowList("== GetDurationsAverage ==", showLine);
+            flightService.GetPassengerTypes(3).ShowList("== GetPassengerTypes ==", showLine);
+            flightService.GetDurationsInMinutesLINQ().ShowList("== GetDurationsInMinutesLINQ ==", showLine);
         }
     }
 }

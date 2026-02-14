@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace AM.ApplicationCore.Domain
 {
@@ -13,6 +14,7 @@ namespace AM.ApplicationCore.Domain
         public string EmailAddress { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [Key]
         public string PassportNumber { get; set; }
         public string TelNumber { get; set; }
         public IList<Flight> Flights { get; set; }
